@@ -8,8 +8,8 @@ type AccessTime struct {
 
 // CounterStats - ...
 type CounterStats struct {
-	Counter int64
-	Handler string
+	Counter int64  `json:"counter"`
+	Handler string `json:"handler"`
 }
 
 // Admin Auth cred - ...
