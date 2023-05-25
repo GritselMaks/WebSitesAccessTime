@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  myapp:
+    image: avaliable_website
+    container_name: avaliable_website-service
+    build:
+      context: .
+      dockerfile: ./service.Dockerfile
+    restart: always
+    ports:
+      - "8080:80"
+    depends_on:
+      - redis
+    environment:
+      PORT: 80
+      LOG_PATH:  ./server_log.txt
+      URL_FILE_PATH: websites.txt
+      UPDATE_TIMEOUT:  60
+      SAVE_METRICS_TIME:  20
+      REDIS_ADDR:  redis:6379
+      REDIS_DB:  0
+      REDIS_SET:  sites
+      ADMIN_USER: root
+      ADMIN_PASS: password
+
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
