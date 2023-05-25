@@ -31,7 +31,7 @@ For faster running, you can use "make up" and "make down".
 - Query Parameters:
   - `url` (required)
 - Response:
-  - Status: 201 Created
+  - Status: 200 OK
   - Body: JSON object {
     "access_time": int64,
     "url": "string"
