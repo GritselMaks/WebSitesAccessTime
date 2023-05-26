@@ -52,14 +52,12 @@ func (a *app) Run(ctx context.Context) error {
 		a.logger.Printf("ErrorConfigStore. Error: %s\n", err.Error())
 		return err
 	}
-	//FIMXE PAth to file
 	urls, err := utils.LoadUrlsList(a.cfg.FilePath)
 	if err != nil {
-		a.logger.Printf("ErrorRead Websites list  Error: %s\n", err.Error())
+		a.logger.Printf("ErrorRead Websites list.  Error: %s\n", err.Error())
 		return err
 	}
 	//configure controllers
-	//FIMXE config setname
 	urlRepo := repo.NewUrlsRepo(a.redisClient, a.cfg.Redis.Set)
 	statsRepo := repo.NewSatsRepo(a.redisClient)
 	clientUCase := statscase.New(urlRepo, a.logger)

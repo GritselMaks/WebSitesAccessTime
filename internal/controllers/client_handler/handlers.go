@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"siteavliable/internal/metrics"
 	"siteavliable/internal/models"
+	"siteavliable/pkg/utils"
 )
 
 type IClientCase interface {
@@ -71,7 +72,12 @@ func (h *HandlerRoutes) GetByURL() http.Handler {
 			http.Error(w, "Bag query params", http.StatusBadRequest)
 			return
 		}
-		accessTime, err := h.uCase.GetByURL(r.Context(), params)
+		u, err := utils.MakeUrl(params)
+		if err != nil {
+			http.Error(w, "Bag query params", http.StatusBadRequest)
+			return
+		}
+		accessTime, err := h.uCase.GetByURL(r.Context(), u)
 		if err != nil {
 			h.logger.Printf("Handler GetByUrl Error: %s\n", err.Error())
 			http.Error(w, err.Error(), http.StatusInternalServerError)

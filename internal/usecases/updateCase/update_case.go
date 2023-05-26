@@ -5,7 +5,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"net/url"
 	"runtime"
 	"siteavliable/internal/usecases/interfaces"
 	"sync"
@@ -15,12 +14,12 @@ import (
 // UpdateUseCase - ...
 type UpdateUseCase struct {
 	logger *log.Logger
-	urls   []*url.URL
+	urls   []string
 	repo   interfaces.IRedisRepoUpdate
 }
 
 // New return new UpdateUseCase
-func New(r interfaces.IRedisRepoUpdate, l *log.Logger, urls []*url.URL) *UpdateUseCase {
+func New(r interfaces.IRedisRepoUpdate, l *log.Logger, urls []string) *UpdateUseCase {
 	return &UpdateUseCase{
 		repo:   r,
 		urls:   urls,
@@ -50,7 +49,7 @@ func (u *UpdateUseCase) UpdateAccessTime(ctx context.Context) {
 		t   int64
 		url string
 	}
-	jobsCh := make(chan url.URL)
+	jobsCh := make(chan string)
 	g := runtime.NumCPU()
 	resJobsCn := make(chan resultJob, g)
 	wg := sync.WaitGroup{}
@@ -60,11 +59,11 @@ func (u *UpdateUseCase) UpdateAccessTime(ctx context.Context) {
 			defer wg.Done()
 			c := http.DefaultClient
 			for url := range jobsCh {
-				accessTime, err := measuringTime(c, url.String())
+				accessTime, err := measuringTime(c, url)
 				jobRes := resultJob{
 					t:   accessTime,
 					e:   err,
-					url: url.Host,
+					url: url,
 				}
 				resJobsCn <- jobRes
 			}
@@ -78,7 +77,7 @@ func (u *UpdateUseCase) UpdateAccessTime(ctx context.Context) {
 
 	go func() {
 		for _, url := range u.urls {
-			jobsCh <- *url
+			jobsCh <- url
 		}
 		close(jobsCh)
 	}()

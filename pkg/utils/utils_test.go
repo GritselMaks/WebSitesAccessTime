@@ -5,21 +5,6 @@ import (
 	"testing"
 )
 
-func TestValidateUrls(t *testing.T) {
-	urls := []string{"https://example.com", "http://example.com", "example.com", "192.168.210.111:8080", "http://"}
-	validatedUrls, err := MakeUrls(urls)
-	if err != nil {
-		t.Errorf("error: %v", err)
-	}
-
-	expectedSchemes := []string{"https", "http", "http"}
-	for i, u := range validatedUrls {
-		if u.Scheme != expectedSchemes[i] {
-			t.Errorf("expected '%s' for URL %d, get: '%s'", expectedSchemes[i], i, u.Scheme)
-		}
-	}
-}
-
 func TestLoadUrlsList(t *testing.T) {
 	//create file
 	testPath := "./test.txt"
@@ -52,4 +37,12 @@ https://stackoverflow.com`)
 		t.Errorf("Expected err, but got nil")
 	}
 
+}
+
+func TestMakeUrl(t *testing.T) {
+	urls := []string{"https://example.com", "http://example.com", "example.com", "http://192.168.210.111:8080", "http://"}
+	validatedUrls := makeUrlList(urls)
+	if len(validatedUrls) != len(urls)-1 {
+		t.Errorf("expected [%v], get: [%v]\n", len(urls)-1, len(validatedUrls))
+	}
 }
